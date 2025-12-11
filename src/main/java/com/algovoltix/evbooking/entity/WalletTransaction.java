@@ -1,5 +1,6 @@
 package com.algovoltix.evbooking.entity;
 
+import com.algovoltix.evbooking.entity.enums.WalletTransactionType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
@@ -25,7 +26,6 @@ public class WalletTransaction implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,7 +33,7 @@ public class WalletTransaction implements Serializable {
     private Long userId;
 
     @Enumerated(EnumType.STRING)
-    private Type type;
+    private WalletTransactionType walletTransactionType;
 
     @Column(nullable = false)
     private BigDecimal amount;
@@ -41,7 +41,6 @@ public class WalletTransaction implements Serializable {
     @Column(nullable = false)
     private Instant createdAt = Instant.now();
 
-    private String reference; // e.g. "BOOKING#123"
+    private String reference;
 
-    // getters & setters
 }

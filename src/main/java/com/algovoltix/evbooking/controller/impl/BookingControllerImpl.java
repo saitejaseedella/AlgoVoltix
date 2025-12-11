@@ -1,24 +1,43 @@
 package com.algovoltix.evbooking.controller.impl;
 
 import com.algovoltix.evbooking.controller.BookingController;
-import com.algovoltix.evbooking.dto.BookingResponse;
-import com.algovoltix.evbooking.dto.CreateBookingRequest;
 import com.algovoltix.evbooking.service.BookingService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequiredArgsConstructor
-@RequestMapping("/v1/booking")
+@RequestMapping("/api/bookings")
 public class BookingControllerImpl implements BookingController {
 
-    private final BookingService bookingService;
+    @Autowired
+    private BookingService bookingService;
 
-    @Override
-    @PostMapping("/create")
-    public ResponseEntity<BookingResponse> createBooking(@RequestBody CreateBookingRequest request) {
-        BookingResponse response = bookingService.createBooking(request);
-        return ResponseEntity.ok(response);
+    @PostMapping
+    public ResponseEntity<BookingResponseDTO> createBooking(@RequestBody BookingRequestDTO bookingRequest) {
+        return ResponseEntity.ok(bookingService.createBooking(bookingRequest));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<BookingResponseDTO> getBookingById(@PathVariable Long id) {
+        return ResponseEntity.ok(bookingService.getBookingById(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<BookingResponseDTO>> getAllBookings() {
+        return ResponseEntity.ok(bookingService.getAllBookings());
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<BookingResponseDTO> updateBooking(@PathVariable Long id, @RequestBody BookingRequestDTO bookingRequest) {
+        return ResponseEntity.ok(bookingService.updateBooking(id, bookingRequest));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBooking(@PathVariable Long id) {
+        bookingService.deleteBooking(id);
+        return ResponseEntity.noContent().build();
     }
 }
