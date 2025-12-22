@@ -1,7 +1,7 @@
 package com.algovoltix.evbooking.controller.impl;
 
 import com.algovoltix.evbooking.controller.WalletController;
-import com.algovoltix.evbooking.dto.response.WalletResponseDTO;
+import com.algovoltix.evbooking.entity.Wallet;
 import com.algovoltix.evbooking.service.WalletService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,29 +16,29 @@ public class WalletControllerImpl implements WalletController {
     @Autowired
     private WalletService walletService;
 
-    @PostMapping
-    public ResponseEntity<WalletResponseDTO> createWallet(@RequestBody WalletRequestDTO walletRequest) {
-        return ResponseEntity.ok(walletService.createWallet(walletRequest));
-    }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<WalletResponseDTO> getWalletById(@PathVariable Long id) {
-        return ResponseEntity.ok(walletService.getWalletById(id));
-    }
+  @Override
+  public ResponseEntity<Wallet> createWallet(Wallet wallet) {
+    return null;
+  }
 
-    @GetMapping
-    public ResponseEntity<List<WalletResponseDTO>> getAllWallets() {
-        return ResponseEntity.ok(walletService.getAllWallets());
-    }
+  @Override
+  public ResponseEntity<Wallet> getWalletById(Long id) {
+    return null;
+  }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<WalletResponseDTO> updateWallet(@PathVariable Long id, @RequestBody WalletRequestDTO walletRequest) {
-        return ResponseEntity.ok(walletService.updateWallet(id, walletRequest));
-    }
+  @Override
+  public ResponseEntity<List<Wallet>> getAllWallets() {
+    return null;
+  }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteWallet(@PathVariable Long id) {
-        walletService.deleteWallet(id);
-        return ResponseEntity.noContent().build();
-    }
+  @Override
+  public ResponseEntity<Wallet> updateWallet(Long id, Wallet wallet) {
+    return null;
+  }
+
+  @Override
+  public ResponseEntity<Void> deleteWallet(Long id) {
+    return null;
+  }
 }

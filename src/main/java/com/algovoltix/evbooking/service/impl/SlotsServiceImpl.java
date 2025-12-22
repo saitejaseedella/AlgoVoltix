@@ -15,33 +15,28 @@ public class SlotsServiceImpl implements SlotsService {
     @Autowired
     private SeatRepository seatRepository;
 
-    @Override
-    public Slots createSlot(Slots slot) {
-        return seatRepository.save(slot);
-    }
+  @Override
+  public Slots createSlot(Slots slot) {
+    return null;
+  }
 
-    @Override
-    public Slots getSlotById(Long id) {
-        Optional<Slots> slot = seatRepository.findById(id);
-        return slot.orElse(null);
-    }
+  @Override
+  public Slots getSlotById(Long id) {
+    return null;
+  }
 
-    @Override
-    public List<Slots> getAllSlots() {
-        return seatRepository.findAll();
-    }
+  @Override
+  public List<Slots> getAllSlots() {
+    return List.of();
+  }
 
-    @Override
-    public Slots updateSlot(Long id, Slots slot) {
-        if (seatRepository.existsById(id)) {
-            slot.setId(id);
-            return seatRepository.save(slot);
-        }
-        return null;
-    }
+  @Override
+  public Slots updateSlot(Long id, Slots slot) {
+    return null;
+  }
 
-    @Override
-    public void deleteSlot(Long id) {
-        seatRepository.deleteById(id);
-    }
+  @Override
+  public void deleteSlot(Long id) {
+
+  }
 }
