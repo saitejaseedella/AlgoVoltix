@@ -1,4 +1,3 @@
-# AlgoVoltix
 # ⚡ AlgoVoltix – EV Slot Booking Backend
 
 AlgoVoltix is a backend service for **discovering, booking and paying for EV charging slots** at public charging stations.  
