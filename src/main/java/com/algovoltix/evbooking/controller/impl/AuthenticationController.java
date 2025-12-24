@@ -1,6 +1,6 @@
 package com.algovoltix.evbooking.controller.impl;
 
-import com.algovoltix.evbooking.controller.IAuthentication;
+import com.algovoltix.evbooking.controller.IAuthenticationController;
 import com.algovoltix.evbooking.dto.request.AuthenticationRequest;
 import com.algovoltix.evbooking.dto.request.RegisterRequest;
 import com.algovoltix.evbooking.dto.response.AuthenticationResponse;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-public class AuthenticationController implements IAuthentication {
+public class AuthenticationController implements IAuthenticationController {
   @Autowired
   private final AuthenticationService authenticationService;
 

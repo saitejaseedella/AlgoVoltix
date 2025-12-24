@@ -1,8 +1,0 @@
-package com.algovoltix.evbooking.controller;
-
-import org.springframework.web.bind.annotation.RestController;
-
-@RestController
-public interface BookingController {
-    // Define CRUD endpoints as abstract methods
-}
