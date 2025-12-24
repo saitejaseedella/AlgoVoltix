@@ -5,7 +5,11 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
-@Data
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 @Entity
 public class Booking {
 
@@ -13,9 +17,9 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bookingId;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private Customer customer;
+      @ManyToOne(fetch = FetchType.LAZY, optional = false)
+      @JoinColumn(name = "customer_id", referencedColumnName = "user_id", nullable = false)
+      private Customer customer;
 
     @ManyToOne
     @JoinColumn(name = "slot_id")

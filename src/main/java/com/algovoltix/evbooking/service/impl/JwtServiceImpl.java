@@ -37,14 +37,18 @@ public class JwtServiceImpl implements JwtService {
   }
 
   public String generateToken(UserDetails userDetails) {
-    return generateToken(new HashMap<>(), userDetails);
+    Map<String, Object> claims = new HashMap<>();
+    // Add role or userType as a claim
+    claims.put("role", userDetails.getAuthorities().stream().findFirst().map(Object::toString).orElse("USER"));
+    return generateToken(claims, userDetails);
   }
 
   public String generateToken(
-      Map<String, Objects> extraClaims,
+      Map<String, Object> extraClaims,
       UserDetails userDetails) {
     return Jwts.builder()
         .setSubject(userDetails.getUsername())
+        .addClaims(extraClaims)
         .claim("roles", userDetails.getAuthorities())
         .setIssuedAt(new Date(System.currentTimeMillis()))
         .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24)) // 1 day
@@ -75,7 +79,7 @@ public class JwtServiceImpl implements JwtService {
     return Keys.hmacShaKeyFor(keyBytes);
   }
 
-  public String generateRefresh(Map<String, Objects> extraClaims, UserDetails userDetails) {
+  public String generateRefresh(Map<String, Object> extraClaims, UserDetails userDetails) {
     return Jwts.builder()
         .setClaims(extraClaims)
         .setSubject(userDetails.getUsername())

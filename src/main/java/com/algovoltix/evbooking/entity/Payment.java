@@ -2,8 +2,11 @@ package com.algovoltix.evbooking.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Entity
 public class Payment {
 

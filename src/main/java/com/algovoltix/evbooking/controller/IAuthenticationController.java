@@ -1,7 +1,6 @@
 package com.algovoltix.evbooking.controller;
 
 import com.algovoltix.evbooking.dto.request.AuthenticationRequest;
-import com.algovoltix.evbooking.dto.request.RegisterRequest;
 import com.algovoltix.evbooking.dto.response.AuthenticationResponse;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
@@ -13,11 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @RequestMapping("/v1.0/api/auth")
 public interface IAuthenticationController {
-
-  @ApiOperation("use this endpoint to register a new user")
-  @PostMapping("/register")
-  ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest registerRequest);
-
 
   @ApiOperation("Use this endpoint to log in an existing user")
   @PostMapping("/log-in")
