@@ -1,69 +1,42 @@
 package com.algovoltix.evbooking.controller.impl;
 
+import com.algovoltix.evbooking.controller.IAuthentication;
 import com.algovoltix.evbooking.dto.request.AuthenticationRequest;
 import com.algovoltix.evbooking.dto.request.RegisterRequest;
 import com.algovoltix.evbooking.dto.response.AuthenticationResponse;
 import com.algovoltix.evbooking.service.impl.AuthenticationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/auth-service")
 @RequiredArgsConstructor
-public class AuthenticationController {
+@Slf4j
+public class AuthenticationController implements IAuthentication {
   @Autowired
   private final AuthenticationService authenticationService;
 
-  @PostMapping("/register")
-  public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest registerRequest) {
-    try {
-      AuthenticationResponse res = authenticationService.register(registerRequest);
-      return ResponseEntity.ok(res);
-    } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    }
+  public ResponseEntity<AuthenticationResponse> register(RegisterRequest registerRequest) {
+      return ResponseEntity.status(HttpStatus.OK)
+          .body(authenticationService.register(registerRequest));
   }
 
-  @PostMapping("/authenticate")
-  public ResponseEntity<AuthenticationResponse> register(@RequestBody AuthenticationRequest authenticationRequest) {
-    try {
+  public ResponseEntity<AuthenticationResponse> longInUser(AuthenticationRequest authenticationRequest) {
       AuthenticationResponse res = authenticationService.authenticate(authenticationRequest);
       return ResponseEntity.ok(res);
-    } catch (Exception e) {
-      System.out.println(e.toString());
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-
-    }
-
   }
 
-  @PostMapping("/refresh")
-  public ResponseEntity<AuthenticationResponse> refresh(@RequestParam("token") String refreshToken) {
-    try {
-      AuthenticationResponse res = authenticationService.refreshToken(refreshToken);
-      return ResponseEntity.ok(res);
-    } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    }
-
+  public ResponseEntity<AuthenticationResponse> refresh(String refreshToken) {
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(authenticationService.refreshToken(refreshToken));
   }
 
-  @GetMapping("/validateToken")
-  public ResponseEntity<Boolean> validateToken(@RequestParam("token") String token) {
-    try {
-      Boolean res = authenticationService.validateToken(token);
-      return ResponseEntity.ok(res);
-    } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    }
+  public ResponseEntity<Boolean> validateToken(String token) {
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(authenticationService.validateToken(token));
   }
 
 }

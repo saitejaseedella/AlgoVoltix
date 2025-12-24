@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Data
@@ -44,7 +45,6 @@ public class User implements Serializable, UserDetails {
   private Role role;
 
 
-  @Column(nullable = false)
   private String fullName;
 
   @Column(unique = true, length = 100, nullable = false)
@@ -64,16 +64,12 @@ public class User implements Serializable, UserDetails {
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return List.of();
-  }
-
-  public String getPassword() {
-    return password;
+    return List.of(new SimpleGrantedAuthority(role.name()));
   }
 
   @Override
   public String getUsername() {
-    return email;
+    return this.email;
   }
 
   @Override
@@ -94,6 +90,11 @@ public class User implements Serializable, UserDetails {
   @Override
   public boolean isEnabled() {
     return true;
+  }
+
+  @Override
+  public String getPassword() {
+    return this.password;
   }
 
 }

@@ -3,6 +3,7 @@ package com.algovoltix.evbooking.controller.impl;
 import com.algovoltix.evbooking.controller.WalletController;
 import com.algovoltix.evbooking.entity.Wallet;
 import com.algovoltix.evbooking.service.WalletService;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,7 @@ public class WalletControllerImpl implements WalletController {
   }
 
   @Override
-  public ResponseEntity<Wallet> getWalletById(Long id) {
+  public ResponseEntity<Wallet> getWalletById(UUID id) {
     return null;
   }
 
@@ -33,12 +34,12 @@ public class WalletControllerImpl implements WalletController {
   }
 
   @Override
-  public ResponseEntity<Wallet> updateWallet(Long id, Wallet wallet) {
+  public ResponseEntity<Wallet> updateWallet(UUID id, Wallet wallet) {
     return null;
   }
 
   @Override
-  public ResponseEntity<Void> deleteWallet(Long id) {
+  public ResponseEntity<Void> deleteWallet(UUID id) {
     return null;
   }
 }
