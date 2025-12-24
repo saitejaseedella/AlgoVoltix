@@ -84,11 +84,21 @@
       <artifactId>jjwt-jackson</artifactId>
       <version>0.12.5</version>
     </dependency>
-
+    <!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-annotations -->
+    <dependency>
+      <groupId>io.swagger.core.v3</groupId>
+      <artifactId>swagger-annotations</artifactId>
+      <version>2.2.38</version>
+    </dependency>
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
       <version>8.0.33</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+      <version>2.3.0</version>
     </dependency>
 	</dependencies>
 

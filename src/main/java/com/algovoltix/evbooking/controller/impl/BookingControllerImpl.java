@@ -1,52 +1,73 @@
 package com.algovoltix.evbooking.controller.impl;
 
-import com.algovoltix.evbooking.controller.IBookingController;
+import com.algovoltix.evbooking.controller.BookingController;
 import com.algovoltix.evbooking.dto.request.BookingRequest;
 import com.algovoltix.evbooking.dto.response.BookingResponse;
 import com.algovoltix.evbooking.service.BookingService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/bookings")
-public class BookingControllerImpl implements IBookingController {
-
-    @Autowired
-    private BookingService bookingService;
+@RequiredArgsConstructor
+@Tag(name = "Booking", description = "APIs for managing bookings")
+public class BookingControllerImpl implements BookingController {
+    private final BookingService bookingService;
 
     @Override
+    @Operation(summary = "Create Booking", description = "Create a new booking.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Booking created successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid input")
+    })
     public ResponseEntity<BookingResponse> createBooking(@RequestBody BookingRequest bookingRequest) {
-        try {
-            BookingResponse response = bookingService.createBooking(bookingRequest);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error creating booking", e);
-        }
+        return ResponseEntity.ok(bookingService.createBooking(bookingRequest));
     }
 
     @Override
-    public ResponseEntity<BookingResponse> getBookingById(@PathVariable Long id) {
+    @Operation(summary = "Get Booking by ID", description = "Retrieve a booking by its ID.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Booking found"),
+        @ApiResponse(responseCode = "404", description = "Booking not found")
+    })
+    public ResponseEntity<BookingResponse> getBookingById(@Parameter(description = "ID of the booking", required = true) @PathVariable Long id) {
         return ResponseEntity.ok(bookingService.getBookingById(id));
     }
 
     @Override
+    @Operation(summary = "Get All Bookings", description = "Retrieve all bookings.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "List of bookings")
+    })
     public ResponseEntity<List<BookingResponse>> getAllBookings() {
-        return ResponseEntity.ok(bookingService.getAllBookings().stream().collect(Collectors.toList()));
+        return ResponseEntity.ok(bookingService.getAllBookings());
     }
 
     @Override
+    @Operation(summary = "Update Booking", description = "Update an existing booking.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Booking updated successfully"),
+        @ApiResponse(responseCode = "404", description = "Booking not found")
+    })
     public ResponseEntity<BookingResponse> updateBooking(@PathVariable Long id, @RequestBody BookingRequest bookingRequest) {
         return ResponseEntity.ok(bookingService.updateBooking(id, bookingRequest));
     }
 
     @Override
-    public ResponseEntity<Void> deleteBooking(@PathVariable Long id) {
+    @Operation(summary = "Delete Booking", description = "Delete a booking by its ID.")
+    @ApiResponses({
+        @ApiResponse(responseCode = "204", description = "Booking deleted successfully"),
+        @ApiResponse(responseCode = "404", description = "Booking not found")
+    })
+    public ResponseEntity<Void> deleteBooking(@Parameter(description = "ID of the booking", required = true) @PathVariable Long id) {
         bookingService.deleteBooking(id);
         return ResponseEntity.noContent().build();
     }

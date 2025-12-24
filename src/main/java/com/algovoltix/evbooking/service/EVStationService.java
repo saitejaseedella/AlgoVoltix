@@ -1,15 +1,13 @@
 package com.algovoltix.evbooking.service;
 
+import com.algovoltix.evbooking.dto.request.EVStationRequest;
+import com.algovoltix.evbooking.dto.response.EVStationResponse;
 import java.util.List;
-import com.algovoltix.evbooking.entity.EVStation;
 
 public interface EVStationService {
-
-  void deleteEVStation(Long id);
-  EVStation updateEVStation(Long id, EVStation evStation);
-  List<EVStation> getAllEVStations();
-  EVStation getEVStationById(Long id);
-  EVStation createEVStation(EVStation evStation);
+    EVStationResponse createEVStation(EVStationRequest request);
+    EVStationResponse getEVStationById(Long id);
+    List<EVStationResponse> getAllEVStations();
+    EVStationResponse updateEVStation(Long id, EVStationRequest request);
+    void deleteEVStation(Long id);
 }
-
-
