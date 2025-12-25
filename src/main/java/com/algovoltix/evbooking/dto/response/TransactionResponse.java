@@ -1,5 +1,6 @@
 package com.algovoltix.evbooking.dto.response;
 
+import java.util.UUID;
 import lombok.Builder;
 import lombok.Data;
 
@@ -10,10 +11,13 @@ import lombok.Setter;
 @Setter
 @Builder
 public class TransactionResponse {
-    private Long transactionId;
-    private Long walletId;
+    private UUID transactionId;
+    private UUID walletId;
+    private UUID bookingId;
+    private UUID paymentId;
+    private UUID transactionBy;
     private String type;
     private String source;
     private Double amount;
+    private java.util.Date createdAt;
 }
-

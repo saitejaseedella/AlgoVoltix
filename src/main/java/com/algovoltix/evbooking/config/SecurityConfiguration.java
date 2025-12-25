@@ -28,6 +28,8 @@ public class SecurityConfiguration {
                 "/api/v1/auth-service/**",
                 "/api/users",
                 "/api/users/**",
+                "/swagger-ui/**",
+                "/v3/api-docs/**",
                 "/api/customers",
                 "/api/customers/**"
             ).permitAll()

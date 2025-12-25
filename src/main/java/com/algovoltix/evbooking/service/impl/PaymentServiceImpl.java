@@ -10,9 +10,9 @@ import com.algovoltix.evbooking.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.http.HttpStatus;
+
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -24,22 +24,26 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public PaymentResponse createPayment(PaymentRequest request) {
+        log.info("Attempting to create payment for walletId={}", request.getWalletId());
         if (request.getWalletId() == null) {
             log.error("Payment creation failed: walletId is null");
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "walletId must not be null");
+            throw com.algovoltix.evbooking.exception.CommonExceptions.BAD_REQUEST;
         }
         if (request.getPaymentMode() == null) {
             log.error("Payment creation failed: paymentMode is null");
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "paymentMode must not be null");
+            throw com.algovoltix.evbooking.exception.CommonExceptions.BAD_REQUEST;
         }
         Wallet wallet = walletRepository.findById(request.getWalletId())
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Wallet not found"));
+            .orElseThrow(() -> {
+                log.error("Wallet not found for payment creation: walletId={}", request.getWalletId());
+                return com.algovoltix.evbooking.exception.CommonExceptions.WALLET_NOT_FOUND;
+            });
         Payment payment = new Payment();
         payment.setWallet(wallet);
         payment.setPaymentMode(request.getPaymentMode());
         payment.setStatus(request.getStatus());
         Payment saved = paymentRepository.save(payment);
-        log.info("Created Payment: {}", saved.getPaymentId());
+        log.info("Payment created successfully: paymentId={}", saved.getPaymentId());
         return PaymentResponse.builder()
             .paymentId(saved.getPaymentId())
             .walletId(wallet.getWalletId())
@@ -49,9 +53,13 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public PaymentResponse getPaymentById(Long id) {
+    public PaymentResponse getPaymentById(UUID id) {
+        log.info("Fetching payment by id={}", id);
         Payment payment = paymentRepository.findById(id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Payment not found"));
+            .orElseThrow(() -> {
+                log.error("Payment not found: id={}", id);
+                return com.algovoltix.evbooking.exception.CommonExceptions.RESOURCE_NOT_FOUND;
+            });
         return PaymentResponse.builder()
             .paymentId(payment.getPaymentId())
             .walletId(payment.getWallet().getWalletId())
@@ -62,6 +70,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public List<PaymentResponse> getAllPayments() {
+        log.info("Fetching all payments");
         return paymentRepository.findAll().stream()
             .map(payment -> PaymentResponse.builder()
                 .paymentId(payment.getPaymentId())
@@ -73,13 +82,17 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public PaymentResponse updatePayment(Long id, PaymentRequest request) {
+    public PaymentResponse updatePayment(UUID id, PaymentRequest request) {
+        log.info("Attempting to update payment: id={}", id);
         Payment payment = paymentRepository.findById(id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Payment not found"));
+            .orElseThrow(() -> {
+                log.error("Payment not found for update: id={}", id);
+                return com.algovoltix.evbooking.exception.CommonExceptions.RESOURCE_NOT_FOUND;
+            });
         payment.setPaymentMode(request.getPaymentMode());
         payment.setStatus(request.getStatus());
         Payment saved = paymentRepository.save(payment);
-        log.info("Updated Payment: {}", saved.getPaymentId());
+        log.info("Payment updated successfully: id={}", id);
         return PaymentResponse.builder()
             .paymentId(saved.getPaymentId())
             .walletId(saved.getWallet().getWalletId())
@@ -89,11 +102,13 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public void deletePayment(Long id) {
+    public void deletePayment(UUID id) {
+        log.info("Attempting to delete payment: id={}", id);
         if (!paymentRepository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Payment not found");
+            log.error("Payment not found for delete: id={}", id);
+            throw com.algovoltix.evbooking.exception.CommonExceptions.RESOURCE_NOT_FOUND;
         }
         paymentRepository.deleteById(id);
-        log.info("Deleted Payment: {}", id);
+        log.info("Payment deleted successfully: id={}", id);
     }
 }

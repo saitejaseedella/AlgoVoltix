@@ -1,22 +1,18 @@
 package com.algovoltix.evbooking.dto.request;
 
+import java.util.UUID;
+
 import lombok.Builder;
 import lombok.Data;
 
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.UUID;
-
-@Getter
-@Setter
+@Data
 @Builder
-public class TransactionRequest {
+public class WalletTransactionRequest {
     private UUID walletId;
+    private Double amount;
+    private String type;
+    private String source;
     private UUID bookingId;
     private UUID paymentId;
     private UUID transactionBy;
-    private String type;
-    private String source;
-    private Double amount;
 }

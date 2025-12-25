@@ -5,14 +5,15 @@ import com.algovoltix.evbooking.dto.response.PaymentResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.UUID;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.Parameter;
 
 @Tag(name = "Payment", description = "APIs for managing payments")
+@RequestMapping("/api/payments")
 public interface PaymentController {
     @Operation(summary = "Create Payment", description = "Create a new payment.")
     @ApiResponses({
@@ -28,7 +29,7 @@ public interface PaymentController {
         @ApiResponse(responseCode = "404", description = "Payment not found")
     })
     @GetMapping("/{id}")
-    ResponseEntity<PaymentResponse> getPaymentById(@Parameter(description = "ID of the payment", required = true) @PathVariable Long id);
+    ResponseEntity<PaymentResponse> getPaymentById(@Parameter(description = "ID of the payment", required = true) @PathVariable UUID id);
 
     @Operation(summary = "Get All Payments", description = "Retrieve all payments.")
     @ApiResponses({
@@ -43,7 +44,7 @@ public interface PaymentController {
         @ApiResponse(responseCode = "404", description = "Payment not found")
     })
     @PutMapping("/{id}")
-    ResponseEntity<PaymentResponse> updatePayment(@Parameter(description = "ID of the payment", required = true) @PathVariable Long id, @RequestBody PaymentRequest request);
+    ResponseEntity<PaymentResponse> updatePayment(@Parameter(description = "ID of the payment", required = true) @PathVariable UUID id, @RequestBody PaymentRequest request);
 
     @Operation(summary = "Delete Payment", description = "Delete a payment by its ID.")
     @ApiResponses({
@@ -51,5 +52,5 @@ public interface PaymentController {
         @ApiResponse(responseCode = "404", description = "Payment not found")
     })
     @DeleteMapping("/{id}")
-    ResponseEntity<Void> deletePayment(@Parameter(description = "ID of the payment", required = true) @PathVariable Long id);
+    ResponseEntity<Void> deletePayment(@Parameter(description = "ID of the payment", required = true) @PathVariable UUID id);
 }

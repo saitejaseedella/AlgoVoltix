@@ -20,7 +20,6 @@ public class SimplePerHourPricingStrategy implements PricingStrategy {
   public BigDecimal calculatePrice(BookingContext context) {
     long minutes = Duration.between(context.getStartTime(), context.getEndTime()).toMinutes();
     if (minutes <= 0) {
-//      throw new BusinessException("End time must be after start time");
     }
     BigDecimal hours = BigDecimal.valueOf(minutes)
         .divide(BigDecimal.valueOf(60), 2, RoundingMode.HALF_UP);

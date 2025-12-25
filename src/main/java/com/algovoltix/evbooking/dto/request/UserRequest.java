@@ -14,5 +14,8 @@ public class UserRequest {
     private String name;
     private String email;
     private String password;
+    private String address;
+    private String mobileNumber;
+    private String geoLocation;
     private UserType userType;
 }

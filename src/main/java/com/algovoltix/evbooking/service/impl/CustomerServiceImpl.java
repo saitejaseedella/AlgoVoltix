@@ -11,9 +11,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.http.HttpStatus;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -26,11 +25,15 @@ public class CustomerServiceImpl implements CustomerService {
   @Transactional
   @Override
   public CustomerResponse createCustomer(CustomerRequest request) {
+    log.info("Attempting to create customer for userId={}", request.getUserId());
     BaseUser user = baseUserRepository.findById(request.getUserId())
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-
+        .orElseThrow(() -> {
+            log.error("User not found for customer creation: userId={}", request.getUserId());
+            return com.algovoltix.evbooking.exception.CommonExceptions.USER_NOT_FOUND;
+        });
     if (customerRepository.existsById(user.getUserId())) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "Customer already exists for user");
+      log.error("Customer already exists for userId={}", user.getUserId());
+      throw com.algovoltix.evbooking.exception.CommonExceptions.CONFLICT;
     }
 
     Customer customer = new Customer();
@@ -39,6 +42,7 @@ public class CustomerServiceImpl implements CustomerService {
     customer.setCarNumber(request.getCarNumber());
 
     Customer saved = customerRepository.save(customer);
+    log.info("Customer created successfully: userId={}", saved.getUserId());
 
     return CustomerResponse.builder()
         .userId(saved.getUserId())
@@ -48,9 +52,13 @@ public class CustomerServiceImpl implements CustomerService {
   }
 
     @Override
-    public CustomerResponse getCustomerById(Long id) {
+    public CustomerResponse getCustomerById(UUID id) {
+        log.info("Fetching customer by id={}", id);
         Customer customer = customerRepository.findById(id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found"));
+            .orElseThrow(() -> {
+                log.error("Customer not found: id={}", id);
+                return com.algovoltix.evbooking.exception.CommonExceptions.USER_NOT_FOUND;
+            });
         return CustomerResponse.builder()
             .userId(customer.getUserId())
             .carType(customer.getCarType())
@@ -71,13 +79,17 @@ public class CustomerServiceImpl implements CustomerService {
 
   @Transactional
   @Override
-    public CustomerResponse updateCustomer(Long id, CustomerRequest request) {
+    public CustomerResponse updateCustomer(UUID id, CustomerRequest request) {
+        log.info("Attempting to update customer: id={}", id);
         Customer customer = customerRepository.findById(id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found"));
+            .orElseThrow(() -> {
+                log.error("Customer not found for update: id={}", id);
+                return com.algovoltix.evbooking.exception.CommonExceptions.USER_NOT_FOUND;
+            });
         customer.setCarType(request.getCarType());
         customer.setCarNumber(request.getCarNumber());
         Customer saved = customerRepository.save(customer);
-        log.info("Updated Customer: {}", saved.getUserId());
+        log.info("Customer updated successfully: id={}", id);
         return CustomerResponse.builder()
             .userId(saved.getUserId())
             .carType(saved.getCarType())
@@ -87,11 +99,13 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Transactional
     @Override
-    public void deleteCustomer(Long id) {
+    public void deleteCustomer(UUID id) {
+        log.info("Attempting to delete customer: id={}", id);
         if (!customerRepository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found");
+            log.error("Customer not found for delete: id={}", id);
+            throw com.algovoltix.evbooking.exception.CommonExceptions.USER_NOT_FOUND;
         }
         customerRepository.deleteById(id);
-        log.info("Deleted Customer: {}", id);
+        log.info("Customer deleted successfully: id={}", id);
     }
 }

@@ -10,7 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
+@RequestMapping("/api/station-owners")
 public interface StationOwnerController {
     @Operation(summary = "Create Station Owner", description = "Create a new station owner.")
     @ApiResponses({
@@ -26,7 +28,7 @@ public interface StationOwnerController {
         @ApiResponse(responseCode = "404", description = "Station owner not found")
     })
     @GetMapping("/{id}")
-    ResponseEntity<StationOwnerResponse> getStationOwnerById(@Parameter(description = "ID of the station owner", required = true) @PathVariable Long id);
+    ResponseEntity<StationOwnerResponse> getStationOwnerById(@Parameter(description = "ID of the station owner", required = true) @PathVariable UUID id);
 
     @Operation(summary = "Get All Station Owners", description = "Retrieve all station owners.")
     @ApiResponses({
@@ -41,7 +43,7 @@ public interface StationOwnerController {
         @ApiResponse(responseCode = "404", description = "Station owner not found")
     })
     @PutMapping("/{id}")
-    ResponseEntity<StationOwnerResponse> updateStationOwner(@Parameter(description = "ID of the station owner", required = true) @PathVariable Long id, @RequestBody StationOwnerRequest request);
+    ResponseEntity<StationOwnerResponse> updateStationOwner(@Parameter(description = "ID of the station owner", required = true) @PathVariable UUID id, @RequestBody StationOwnerRequest request);
 
     @Operation(summary = "Delete Station Owner", description = "Delete a station owner by their ID.")
     @ApiResponses({
@@ -49,5 +51,5 @@ public interface StationOwnerController {
         @ApiResponse(responseCode = "404", description = "Station owner not found")
     })
     @DeleteMapping("/{id}")
-    ResponseEntity<Void> deleteStationOwner(@Parameter(description = "ID of the station owner", required = true) @PathVariable Long id);
+    ResponseEntity<Void> deleteStationOwner(@Parameter(description = "ID of the station owner", required = true) @PathVariable UUID id);
 }

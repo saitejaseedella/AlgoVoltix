@@ -14,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -38,7 +39,7 @@ public class StationOwnerServiceImpl implements StationOwnerService {
     }
 
     @Override
-    public StationOwnerResponse getStationOwnerById(Long id) {
+    public StationOwnerResponse getStationOwnerById(UUID id) {
         StationOwner owner = stationOwnerRepository.findById(id)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "StationOwner not found"));
         return StationOwnerResponse.builder()
@@ -58,7 +59,7 @@ public class StationOwnerServiceImpl implements StationOwnerService {
     }
 
     @Override
-    public StationOwnerResponse updateStationOwner(Long id, StationOwnerRequest request) {
+    public StationOwnerResponse updateStationOwner(UUID id, StationOwnerRequest request) {
         StationOwner owner = stationOwnerRepository.findById(id)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "StationOwner not found"));
         owner.setGstNumber(request.getGstNumber());
@@ -71,7 +72,7 @@ public class StationOwnerServiceImpl implements StationOwnerService {
     }
 
     @Override
-    public void deleteStationOwner(Long id) {
+    public void deleteStationOwner(UUID id) {
         if (!stationOwnerRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "StationOwner not found");
         }
@@ -79,4 +80,3 @@ public class StationOwnerServiceImpl implements StationOwnerService {
         log.info("Deleted StationOwner: {}", id);
     }
 }
-

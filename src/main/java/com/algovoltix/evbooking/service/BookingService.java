@@ -3,11 +3,12 @@ package com.algovoltix.evbooking.service;
 import com.algovoltix.evbooking.dto.request.BookingRequest;
 import com.algovoltix.evbooking.dto.response.BookingResponse;
 import java.util.List;
+import java.util.UUID;
 
 public interface BookingService {
     BookingResponse createBooking(BookingRequest bookingRequest);
-    BookingResponse getBookingById(Long id);
+    BookingResponse getBookingById(UUID id);
     List<BookingResponse> getAllBookings();
-    BookingResponse updateBooking(Long id, BookingRequest bookingRequest);
-    void deleteBooking(Long id);
+    BookingResponse updateBooking(UUID id, BookingRequest bookingRequest);
+    void deleteBooking(UUID id);
 }

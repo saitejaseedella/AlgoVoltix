@@ -8,10 +8,9 @@ import com.algovoltix.evbooking.service.EVStationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.http.HttpStatus;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -22,65 +21,95 @@ public class EVStationServiceImpl implements EVStationService {
 
     @Override
     public EVStationResponse createEVStation(EVStationRequest request) {
+        log.info("Attempting to create EV station");
         EVStation station = new EVStation();
-        station.setGeoLocation(request.getLocation());
-        station.setStatus("ACTIVE");
+        station.setGeoLocation(request.getGeoLocation());
+        station.setStatus(request.getStatus());
+        station.setCapacity(request.getCapacity());
         EVStation saved = evStationRepository.save(station);
-        log.info("Created EVStation: {}", saved.getStationId());
+        log.info("EVStation created successfully: stationId={}", saved.getStationId());
         return EVStationResponse.builder()
-            .id(saved.getStationId())
-            .name(request.getName())
-            .location(request.getLocation())
-            .capacity(request.getCapacity())
+            .stationId(saved.getStationId())
+            .name(saved.getName())
+            .geoLocation(saved.getGeoLocation())
+            .status(saved.getStatus())
+            .capacity(saved.getCapacity())
+            .ownerId(saved.getOwner() != null ? saved.getOwner().getUserId() : null)
+            .createdAt(saved.getCreatedAt())
+            .updatedAt(saved.getUpdatedAt())
             .build();
     }
 
     @Override
-    public EVStationResponse getEVStationById(Long id) {
+    public EVStationResponse getEVStationById(UUID id) {
+        log.info("Fetching EV station by id={}", id);
         EVStation station = evStationRepository.findById(id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "EVStation not found"));
+            .orElseThrow(() -> {
+                log.error("EVStation not found: id={}", id);
+                return com.algovoltix.evbooking.exception.CommonExceptions.EV_STATION_NOT_FOUND;
+            });
         return EVStationResponse.builder()
-            .id(station.getStationId())
+            .stationId(station.getStationId())
             .name(null)
-            .location(station.getGeoLocation())
+            .geoLocation(station.getGeoLocation())
+            .status(station.getStatus())
             .capacity(0)
+            .ownerId(null)
+            .createdAt(null)
+            .updatedAt(null)
             .build();
     }
 
     @Override
     public List<EVStationResponse> getAllEVStations() {
+        log.info("Fetching all EV stations");
         return evStationRepository.findAll().stream()
             .map(station -> EVStationResponse.builder()
-                .id(station.getStationId())
+                .stationId(station.getStationId())
                 .name(null)
-                .location(station.getGeoLocation())
+                .geoLocation(station.getGeoLocation())
+                .status(station.getStatus())
                 .capacity(0)
+                .ownerId(null)
+                .createdAt(null)
+                .updatedAt(null)
                 .build())
             .collect(Collectors.toList());
     }
 
     @Override
-    public EVStationResponse updateEVStation(Long id, EVStationRequest request) {
+    public EVStationResponse updateEVStation(UUID id, EVStationRequest request) {
+        log.info("Attempting to update EV station: id={}", id);
         EVStation station = evStationRepository.findById(id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "EVStation not found"));
-        station.setGeoLocation(request.getLocation());
-        station.setStatus("ACTIVE");
+            .orElseThrow(() -> {
+                log.error("EVStation not found for update: id={}", id);
+                return com.algovoltix.evbooking.exception.CommonExceptions.EV_STATION_NOT_FOUND;
+            });
+        station.setGeoLocation(request.getGeoLocation());
+        station.setStatus(request.getStatus());
+        station.setCapacity(request.getCapacity());
         EVStation saved = evStationRepository.save(station);
-        log.info("Updated EVStation: {}", saved.getStationId());
+        log.info("EVStation updated successfully: id={}", id);
         return EVStationResponse.builder()
-            .id(saved.getStationId())
-            .name(request.getName())
-            .location(request.getLocation())
-            .capacity(request.getCapacity())
+            .stationId(saved.getStationId())
+            .name(saved.getName())
+            .geoLocation(saved.getGeoLocation())
+            .status(saved.getStatus())
+            .capacity(saved.getCapacity())
+            .ownerId(saved.getOwner() != null ? saved.getOwner().getUserId() : null)
+            .createdAt(saved.getCreatedAt())
+            .updatedAt(saved.getUpdatedAt())
             .build();
     }
 
     @Override
-    public void deleteEVStation(Long id) {
+    public void deleteEVStation(UUID id) {
+        log.info("Attempting to delete EV station: id={}", id);
         if (!evStationRepository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "EVStation not found");
+            log.error("EVStation not found for delete: id={}", id);
+            throw com.algovoltix.evbooking.exception.CommonExceptions.EV_STATION_NOT_FOUND;
         }
         evStationRepository.deleteById(id);
-        log.info("Deleted EVStation: {}", id);
+        log.info("EVStation deleted successfully: id={}", id);
     }
 }

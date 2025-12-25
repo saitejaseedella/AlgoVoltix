@@ -5,11 +5,11 @@ import com.algovoltix.evbooking.dto.response.TransactionResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.UUID;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.Parameter;
 
 @Tag(name = "Transaction", description = "APIs for managing transactions")
@@ -28,7 +28,7 @@ public interface TransactionController {
         @ApiResponse(responseCode = "404", description = "Transaction not found")
     })
     @GetMapping("/{id}")
-    ResponseEntity<TransactionResponse> getTransactionById(@Parameter(description = "ID of the transaction", required = true) @PathVariable Long id);
+    ResponseEntity<TransactionResponse> getTransactionById(@Parameter(description = "ID of the transaction", required = true) @PathVariable UUID id);
 
     @Operation(summary = "Get All Transactions", description = "Retrieve all transactions.")
     @ApiResponses({
@@ -43,7 +43,7 @@ public interface TransactionController {
         @ApiResponse(responseCode = "404", description = "Transaction not found")
     })
     @PutMapping("/{id}")
-    ResponseEntity<TransactionResponse> updateTransaction(@Parameter(description = "ID of the transaction", required = true) @PathVariable Long id, @RequestBody TransactionRequest request);
+    ResponseEntity<TransactionResponse> updateTransaction(@Parameter(description = "ID of the transaction", required = true) @PathVariable UUID id, @RequestBody TransactionRequest request);
 
     @Operation(summary = "Delete Transaction", description = "Delete a transaction by its ID.")
     @ApiResponses({
@@ -51,5 +51,5 @@ public interface TransactionController {
         @ApiResponse(responseCode = "404", description = "Transaction not found")
     })
     @DeleteMapping("/{id}")
-    ResponseEntity<Void> deleteTransaction(@Parameter(description = "ID of the transaction", required = true) @PathVariable Long id);
+    ResponseEntity<Void> deleteTransaction(@Parameter(description = "ID of the transaction", required = true) @PathVariable UUID id);
 }

@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.algovoltix.evbooking.repository.UserRepository;
 import com.algovoltix.evbooking.entity.User;
 import com.algovoltix.evbooking.entity.enums.Role;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -34,10 +35,15 @@ public class BaseUserServiceImpl implements BaseUserService {
     @Override
     @Transactional
     public UserResponse createUser(UserRequest userRequest) {
+        log.info("Attempting to create user: email={}", userRequest.getEmail());
         BaseUser user = new BaseUser();
         user.setName(userRequest.getName());
         user.setEmail(userRequest.getEmail());
         user.setUserType(userRequest.getUserType());
+        user.setPassword(passwordEncoder.encode(userRequest.getPassword())); // FIX: Set password
+        user.setAddress(userRequest.getAddress());
+        user.setMobileNumber(userRequest.getMobileNumber());
+        user.setGeoLocation(userRequest.getGeoLocation());
         BaseUser saved = baseUserRepository.save(user);
         BaseUser managedUser = baseUserRepository.findById(saved.getUserId())
             .orElseThrow(() -> new IllegalStateException("User not found after save"));
@@ -54,29 +60,33 @@ public class BaseUserServiceImpl implements BaseUserService {
         }
         Role securityRole = userRequest.getUserType() == UserType.STATION_OWNER ? Role.STATION_OWNER
             : Role.CUSTOMER;
-      User securityUser = User.builder()
+        User securityUser = User.builder()
             .email(userRequest.getEmail())
             .password(passwordEncoder.encode(userRequest.getPassword()))
             .role(securityRole)
             .firstName(userRequest.getName())
             .build();
         userRepository.save(securityUser);
-        // Load the saved User entity for JWT generation
-        User savedSecurityUser = userRepository.findByEmail(userRequest.getEmail())
-            .orElseThrow(() -> new IllegalStateException("Security user not found after save"));
-        String jwtToken = jwtService.generateToken(savedSecurityUser);
+        log.info("User created successfully: userId={}", managedUser.getUserId());
         return UserResponse.builder()
-            .userId(saved.getUserId())
-            .name(saved.getName())
-            .email(saved.getEmail())
-            .jwtToken(jwtToken)
+            .userId(managedUser.getUserId())
+            .name(managedUser.getName())
+            .email(managedUser.getEmail())
+            .userType(managedUser.getUserType())
+            .address(managedUser.getAddress())
+            .mobileNumber(managedUser.getMobileNumber())
+            .geoLocation(managedUser.getGeoLocation())
             .build();
     }
 
     @Override
-    public UserResponse getUserById(Long id) {
+    public UserResponse getUserById(UUID id) {
+        log.info("Fetching user by id={}", id);
         BaseUser user = baseUserRepository.findById(id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+            .orElseThrow(() -> {
+                log.error("User not found: id={}", id);
+                return com.algovoltix.evbooking.exception.CommonExceptions.USER_NOT_FOUND;
+            });
         return UserResponse.builder()
             .userId(user.getUserId())
             .name(user.getName())
@@ -86,6 +96,7 @@ public class BaseUserServiceImpl implements BaseUserService {
 
     @Override
     public List<UserResponse> getAllUsers() {
+        log.info("Fetching all users");
         return baseUserRepository.findAll().stream()
             .map(user -> UserResponse.builder()
                 .userId(user.getUserId())
@@ -96,14 +107,18 @@ public class BaseUserServiceImpl implements BaseUserService {
     }
 
     @Override
-    public UserResponse updateUser(Long id, UserRequest userRequest) {
+    public UserResponse updateUser(UUID id, UserRequest userRequest) {
+        log.info("Attempting to update user: id={}", id);
         BaseUser user = baseUserRepository.findById(id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+            .orElseThrow(() -> {
+                log.error("User not found for update: id={}", id);
+                return com.algovoltix.evbooking.exception.CommonExceptions.USER_NOT_FOUND;
+            });
         user.setName(userRequest.getName());
         user.setEmail(userRequest.getEmail());
         // user.setPassword(userRequest.getPassword()); // if password exists
         BaseUser saved = baseUserRepository.save(user);
-        log.info("Updating user: {}", id);
+        log.info("User updated successfully: id={}", id);
         return UserResponse.builder()
             .userId(saved.getUserId())
             .name(saved.getName())
@@ -112,11 +127,13 @@ public class BaseUserServiceImpl implements BaseUserService {
     }
 
     @Override
-    public void deleteUser(Long id) {
+    public void deleteUser(UUID id) {
+        log.info("Attempting to delete user: id={}", id);
         if (!baseUserRepository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+            log.error("User not found for delete: id={}", id);
+            throw com.algovoltix.evbooking.exception.CommonExceptions.USER_NOT_FOUND;
         }
         baseUserRepository.deleteById(id);
-        log.info("Deleted user: {}", id);
+        log.info("User deleted successfully: id={}", id);
     }
 }

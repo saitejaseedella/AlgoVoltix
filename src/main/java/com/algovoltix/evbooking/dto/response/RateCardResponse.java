@@ -1,5 +1,6 @@
 package com.algovoltix.evbooking.dto.response;
 
+import java.util.UUID;
 import lombok.Builder;
 import lombok.Data;
 
@@ -10,8 +11,10 @@ import lombok.Setter;
 @Setter
 @Builder
 public class RateCardResponse {
-    private Long rateCardId;
-    private Long slotId;
+    private UUID rateCardId;
+    private UUID slotId;
     private Double price;
+    private UUID algorithmId;
+    private java.util.Date createdAt;
+    private java.util.Date updatedAt;
 }
-

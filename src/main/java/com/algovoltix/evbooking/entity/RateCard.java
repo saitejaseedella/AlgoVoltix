@@ -1,10 +1,13 @@
 package com.algovoltix.evbooking.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
-
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.util.Date;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -12,8 +15,8 @@ import lombok.Setter;
 public class RateCard {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long rateCardId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID rateCardId;
 
     @OneToOne
     @JoinColumn(name = "slot_id", unique = true)
@@ -24,6 +27,13 @@ public class RateCard {
     private PriceAlgorithm priceAlgorithm;
 
     private Double price;
+
+    @CreationTimestamp
+    @Column(updatable = false)
+    private Date createdAt;
+
+    @UpdateTimestamp
+    private Date updatedAt;
 
     public StationSlot getSlot() {
         return this.stationSlot;

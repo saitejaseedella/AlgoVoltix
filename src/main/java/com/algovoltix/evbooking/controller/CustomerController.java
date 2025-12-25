@@ -5,14 +5,15 @@ import com.algovoltix.evbooking.dto.response.CustomerResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.UUID;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.Parameter;
 
 @Tag(name = "Customer", description = "APIs for managing customers")
+@RequestMapping("/api/customers")
 public interface CustomerController {
     @Operation(summary = "Create Customer", description = "Create a new customer.")
     @ApiResponses({
@@ -28,7 +29,7 @@ public interface CustomerController {
         @ApiResponse(responseCode = "404", description = "Customer not found")
     })
     @GetMapping("/{id}")
-    ResponseEntity<CustomerResponse> getCustomerById(@Parameter(description = "ID of the customer", required = true) @PathVariable Long id);
+    ResponseEntity<CustomerResponse> getCustomerById(@Parameter(description = "ID of the customer", required = true) @PathVariable UUID id);
 
     @Operation(summary = "Get All Customers", description = "Retrieve all customers.")
     @ApiResponses({
@@ -43,7 +44,7 @@ public interface CustomerController {
         @ApiResponse(responseCode = "404", description = "Customer not found")
     })
     @PutMapping("/{id}")
-    ResponseEntity<CustomerResponse> updateCustomer(@Parameter(description = "ID of the customer", required = true) @PathVariable Long id, @RequestBody CustomerRequest request);
+    ResponseEntity<CustomerResponse> updateCustomer(@Parameter(description = "ID of the customer", required = true) @PathVariable UUID id, @RequestBody CustomerRequest request);
 
     @Operation(summary = "Delete Customer", description = "Delete a customer by their ID.")
     @ApiResponses({
@@ -51,5 +52,5 @@ public interface CustomerController {
         @ApiResponse(responseCode = "404", description = "Customer not found")
     })
     @DeleteMapping("/{id}")
-    ResponseEntity<Void> deleteCustomer(@Parameter(description = "ID of the customer", required = true) @PathVariable Long id);
+    ResponseEntity<Void> deleteCustomer(@Parameter(description = "ID of the customer", required = true) @PathVariable UUID id);
 }

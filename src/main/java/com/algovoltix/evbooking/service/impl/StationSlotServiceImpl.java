@@ -10,10 +10,12 @@ import com.algovoltix.evbooking.service.StationSlotService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.http.HttpStatus;
+
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static com.algovoltix.evbooking.exception.CommonExceptions.*;
 
 @Slf4j
 @Service
@@ -24,13 +26,17 @@ public class StationSlotServiceImpl implements StationSlotService {
 
     @Override
     public StationSlotResponse createStationSlot(StationSlotRequest request) {
+        log.info("Attempting to create station slot for stationId={}", request.getStationId());
         EVStation station = evStationRepository.findById(request.getStationId())
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "EVStation not found"));
+            .orElseThrow(() -> {
+                log.error("EVStation not found for slot creation: stationId={}", request.getStationId());
+                return com.algovoltix.evbooking.exception.CommonExceptions.EV_STATION_NOT_FOUND;
+            });
         StationSlot slot = new StationSlot();
         slot.setEvStation(station);
         slot.setStatus(request.getStatus());
         StationSlot saved = stationSlotRepository.save(slot);
-        log.info("Created StationSlot: {}", saved.getSlotId());
+        log.info("StationSlot created successfully: slotId={}", saved.getSlotId());
         return StationSlotResponse.builder()
             .slotId(saved.getSlotId())
             .stationId(station.getStationId())
@@ -39,9 +45,13 @@ public class StationSlotServiceImpl implements StationSlotService {
     }
 
     @Override
-    public StationSlotResponse getStationSlotById(Long id) {
+    public StationSlotResponse getStationSlotById(UUID id) {
+        log.info("Fetching station slot by id={}", id);
         StationSlot slot = stationSlotRepository.findById(id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "StationSlot not found"));
+            .orElseThrow(() -> {
+                log.error("StationSlot not found: id={}", id);
+                return com.algovoltix.evbooking.exception.CommonExceptions.RESOURCE_NOT_FOUND;
+            });
         return StationSlotResponse.builder()
             .slotId(slot.getSlotId())
             .stationId(slot.getEvStation().getStationId())
@@ -51,6 +61,7 @@ public class StationSlotServiceImpl implements StationSlotService {
 
     @Override
     public List<StationSlotResponse> getAllStationSlots() {
+        log.info("Fetching all station slots");
         return stationSlotRepository.findAll().stream()
             .map(slot -> StationSlotResponse.builder()
                 .slotId(slot.getSlotId())
@@ -61,12 +72,16 @@ public class StationSlotServiceImpl implements StationSlotService {
     }
 
     @Override
-    public StationSlotResponse updateStationSlot(Long id, StationSlotRequest request) {
+    public StationSlotResponse updateStationSlot(UUID id, StationSlotRequest request) {
+        log.info("Attempting to update station slot: id={}", id);
         StationSlot slot = stationSlotRepository.findById(id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "StationSlot not found"));
+            .orElseThrow(() -> {
+                log.error("StationSlot not found for update: id={}", id);
+                return com.algovoltix.evbooking.exception.CommonExceptions.RESOURCE_NOT_FOUND;
+            });
         slot.setStatus(request.getStatus());
         StationSlot saved = stationSlotRepository.save(slot);
-        log.info("Updated StationSlot: {}", saved.getSlotId());
+        log.info("StationSlot updated successfully: id={}", id);
         return StationSlotResponse.builder()
             .slotId(saved.getSlotId())
             .stationId(saved.getEvStation().getStationId())
@@ -75,12 +90,13 @@ public class StationSlotServiceImpl implements StationSlotService {
     }
 
     @Override
-    public void deleteStationSlot(Long id) {
+    public void deleteStationSlot(UUID id) {
+        log.info("Attempting to delete station slot: id={}", id);
         if (!stationSlotRepository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "StationSlot not found");
+            log.error("StationSlot not found for delete: id={}", id);
+            throw com.algovoltix.evbooking.exception.CommonExceptions.RESOURCE_NOT_FOUND;
         }
         stationSlotRepository.deleteById(id);
-        log.info("Deleted StationSlot: {}", id);
+        log.info("StationSlot deleted successfully: id={}", id);
     }
 }
-// The interface and implementation are correct. The error may be due to an old interface definition or a mismatch in the build. Let's ensure the interface and implementation match exactly.

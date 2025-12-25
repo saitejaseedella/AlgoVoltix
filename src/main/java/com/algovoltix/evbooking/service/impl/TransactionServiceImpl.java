@@ -10,9 +10,9 @@ import com.algovoltix.evbooking.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.http.HttpStatus;
+
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -24,15 +24,19 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public TransactionResponse createTransaction(TransactionRequest request) {
+        log.info("Attempting to create transaction for walletId={}", request.getWalletId());
         Wallet wallet = walletRepository.findById(request.getWalletId())
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Wallet not found"));
+            .orElseThrow(() -> {
+                log.error("Wallet not found for transaction creation: walletId={}", request.getWalletId());
+                return com.algovoltix.evbooking.exception.CommonExceptions.WALLET_NOT_FOUND;
+            });
         Transaction transaction = new Transaction();
         transaction.setWallet(wallet);
         transaction.setType(request.getType());
         transaction.setSource(request.getSource());
         transaction.setAmount(request.getAmount());
         Transaction saved = transactionRepository.save(transaction);
-        log.info("Created Transaction: {}", saved.getTransactionId());
+        log.info("Transaction created successfully: transactionId={}", saved.getTransactionId());
         return TransactionResponse.builder()
             .transactionId(saved.getTransactionId())
             .walletId(wallet.getWalletId())
@@ -43,9 +47,13 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public TransactionResponse getTransactionById(Long id) {
+    public TransactionResponse getTransactionById(UUID id) {
+        log.info("Fetching transaction by id={}", id);
         Transaction transaction = transactionRepository.findById(id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Transaction not found"));
+            .orElseThrow(() -> {
+                log.error("Transaction not found: id={}", id);
+                return com.algovoltix.evbooking.exception.CommonExceptions.RESOURCE_NOT_FOUND;
+            });
         return TransactionResponse.builder()
             .transactionId(transaction.getTransactionId())
             .walletId(transaction.getWallet().getWalletId())
@@ -57,6 +65,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public List<TransactionResponse> getAllTransactions() {
+        log.info("Fetching all transactions");
         return transactionRepository.findAll().stream()
             .map(transaction -> TransactionResponse.builder()
                 .transactionId(transaction.getTransactionId())
@@ -69,14 +78,18 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public TransactionResponse updateTransaction(Long id, TransactionRequest request) {
+    public TransactionResponse updateTransaction(UUID id, TransactionRequest request) {
+        log.info("Attempting to update transaction: id={}", id);
         Transaction transaction = transactionRepository.findById(id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Transaction not found"));
+            .orElseThrow(() -> {
+                log.error("Transaction not found for update: id={}", id);
+                return com.algovoltix.evbooking.exception.CommonExceptions.RESOURCE_NOT_FOUND;
+            });
         transaction.setType(request.getType());
         transaction.setSource(request.getSource());
         transaction.setAmount(request.getAmount());
         Transaction saved = transactionRepository.save(transaction);
-        log.info("Updated Transaction: {}", saved.getTransactionId());
+        log.info("Transaction updated successfully: id={}", id);
         return TransactionResponse.builder()
             .transactionId(saved.getTransactionId())
             .walletId(saved.getWallet().getWalletId())
@@ -87,12 +100,13 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public void deleteTransaction(Long id) {
+    public void deleteTransaction(UUID id) {
+        log.info("Attempting to delete transaction: id={}", id);
         if (!transactionRepository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Transaction not found");
+            log.error("Transaction not found for delete: id={}", id);
+            throw com.algovoltix.evbooking.exception.CommonExceptions.RESOURCE_NOT_FOUND;
         }
         transactionRepository.deleteById(id);
-        log.info("Deleted Transaction: {}", id);
+        log.info("Transaction deleted successfully: id={}", id);
     }
 }
-

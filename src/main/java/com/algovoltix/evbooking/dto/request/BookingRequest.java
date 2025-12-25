@@ -7,14 +7,20 @@ import lombok.Builder;
 
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.UUID;
+
 @Builder
 
 @Getter
 @Setter
 public class BookingRequest {
 
-  private String endTime;
+  private UUID userId;
+  private UUID slotId;
   private String startTime;
-  private Long slotId;
-  private Long userId;
+  private String endTime;
+  private String bookingStatus;
+  private Double totalPrice;
+  private Double duration;
 }
