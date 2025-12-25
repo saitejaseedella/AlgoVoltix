@@ -40,7 +40,7 @@ public class BaseUserServiceImpl implements BaseUserService {
         user.setName(userRequest.getName());
         user.setEmail(userRequest.getEmail());
         user.setUserType(userRequest.getUserType());
-        user.setPassword(passwordEncoder.encode(userRequest.getPassword())); // FIX: Set password
+        user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         user.setAddress(userRequest.getAddress());
         user.setMobileNumber(userRequest.getMobileNumber());
         user.setGeoLocation(userRequest.getGeoLocation());
@@ -53,7 +53,6 @@ public class BaseUserServiceImpl implements BaseUserService {
             customer.setBaseUser(managedUser);
             customerRepository.save(customer);
         }
-        // Create User entity for authentication
         if (userRequest.getUserType() == null) {
             log.error("UserType is null in registration request for email: {}", userRequest.getEmail());
             throw new IllegalArgumentException("UserType must not be null");
@@ -116,7 +115,6 @@ public class BaseUserServiceImpl implements BaseUserService {
             });
         user.setName(userRequest.getName());
         user.setEmail(userRequest.getEmail());
-        // user.setPassword(userRequest.getPassword()); // if password exists
         BaseUser saved = baseUserRepository.save(user);
         log.info("User updated successfully: id={}", id);
         return UserResponse.builder()

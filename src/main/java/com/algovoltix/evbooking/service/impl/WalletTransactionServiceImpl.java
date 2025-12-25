@@ -23,14 +23,14 @@ public class WalletTransactionServiceImpl implements WalletTransactionService {
     @Override
     public WalletTransactionResponse createWalletTransaction(WalletTransactionRequest request) {
         WalletTransaction entity = new WalletTransaction();
-        entity.setWallet(null); // Set wallet if needed
-        entity.setBooking(null); // Set booking if needed
-        entity.setPayment(null); // Set payment if needed
-        entity.setUserId(request.getWalletId()); // or set userId if needed
-        entity.setWalletTransactionType(null); // Set if needed
+        entity.setWallet(null);
+        entity.setBooking(null);
+        entity.setPayment(null);
+        entity.setUserId(request.getWalletId());
+        entity.setWalletTransactionType(null);
         entity.setAmount(BigDecimal.valueOf(request.getAmount()));
         entity.setCreatedAt(Instant.now());
-        entity.setReference(null); // Set if needed
+        entity.setReference(null);
         entity.setTransactionBy(request.getTransactionBy());
         entity.setType(request.getType());
         entity.setSource(request.getSource());

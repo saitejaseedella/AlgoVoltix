@@ -93,7 +93,7 @@ public class JwtServiceImpl implements JwtService {
   }
 
   public Boolean validateToken(String token) {
-    String userEmail = extractUserName(token);//todo extract userEmail from jwt Token
+    String userEmail = extractUserName(token);
     if (StringUtils.isNotEmpty(userEmail) && !isTokenExpired(token)) {
       UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
       return isTokenValid(token, userDetails);
