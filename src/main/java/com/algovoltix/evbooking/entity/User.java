@@ -46,6 +46,7 @@ public class User implements Serializable, UserDetails {
   private String lastName;
 
   @Enumerated(EnumType.STRING)
+  @Column(nullable = false, length = 20)
   private Role role;
 
 

@@ -48,21 +48,23 @@ public class BaseUserServiceImpl implements BaseUserService {
             customerRepository.save(customer);
         }
         // Create User entity for authentication
+        if (userRequest.getUserType() == null) {
+            log.error("UserType is null in registration request for email: {}", userRequest.getEmail());
+            throw new IllegalArgumentException("UserType must not be null");
+        }
         Role securityRole = userRequest.getUserType() == UserType.STATION_OWNER ? Role.STATION_OWNER
             : Role.CUSTOMER;
-        User securityUser = User.builder()
+      User securityUser = User.builder()
             .email(userRequest.getEmail())
             .password(passwordEncoder.encode(userRequest.getPassword()))
             .role(securityRole)
             .firstName(userRequest.getName())
             .build();
         userRepository.save(securityUser);
-        org.springframework.security.core.userdetails.User springUser =
-            new org.springframework.security.core.userdetails.User(
-                user.getEmail(), userRequest.getPassword(),
-                java.util.List.of(new org.springframework.security.core.authority.SimpleGrantedAuthority(userRequest.getUserType().name()))
-            );
-        String jwtToken = jwtService.generateToken(springUser);
+        // Load the saved User entity for JWT generation
+        User savedSecurityUser = userRepository.findByEmail(userRequest.getEmail())
+            .orElseThrow(() -> new IllegalStateException("Security user not found after save"));
+        String jwtToken = jwtService.generateToken(savedSecurityUser);
         return UserResponse.builder()
             .userId(saved.getUserId())
             .name(saved.getName())

@@ -24,6 +24,14 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public PaymentResponse createPayment(PaymentRequest request) {
+        if (request.getWalletId() == null) {
+            log.error("Payment creation failed: walletId is null");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "walletId must not be null");
+        }
+        if (request.getPaymentMode() == null) {
+            log.error("Payment creation failed: paymentMode is null");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "paymentMode must not be null");
+        }
         Wallet wallet = walletRepository.findById(request.getWalletId())
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Wallet not found"));
         Payment payment = new Payment();
@@ -89,4 +97,3 @@ public class PaymentServiceImpl implements PaymentService {
         log.info("Deleted Payment: {}", id);
     }
 }
-
