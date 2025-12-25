@@ -13,4 +13,3 @@ public class PriceAlgorithmRequest {
     private String type;
     private String config;
 }
-

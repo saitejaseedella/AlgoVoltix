@@ -5,14 +5,15 @@ import com.algovoltix.evbooking.dto.response.BookingResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.UUID;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.Parameter;
 
 @Tag(name = "Booking", description = "APIs for managing bookings")
+@RequestMapping("/api/bookings")
 public interface BookingController {
     @Operation(summary = "Create Booking", description = "Create a new booking.")
     @ApiResponses({
@@ -28,7 +29,7 @@ public interface BookingController {
         @ApiResponse(responseCode = "404", description = "Booking not found")
     })
     @GetMapping("/{id}")
-    ResponseEntity<BookingResponse> getBookingById(@Parameter(description = "ID of the booking", required = true) @PathVariable Long id);
+    ResponseEntity<BookingResponse> getBookingById(@Parameter(description = "ID of the booking", required = true) @PathVariable UUID id);
 
     @Operation(summary = "Get All Bookings", description = "Retrieve all bookings.")
     @ApiResponses({
@@ -43,7 +44,7 @@ public interface BookingController {
         @ApiResponse(responseCode = "404", description = "Booking not found")
     })
     @PutMapping("/{id}")
-    ResponseEntity<BookingResponse> updateBooking(@Parameter(description = "ID of the booking", required = true) @PathVariable Long id, @RequestBody BookingRequest bookingRequest);
+    ResponseEntity<BookingResponse> updateBooking(@Parameter(description = "ID of the booking", required = true) @PathVariable UUID id, @RequestBody BookingRequest bookingRequest);
 
     @Operation(summary = "Delete Booking", description = "Delete a booking by its ID.")
     @ApiResponses({
@@ -51,5 +52,5 @@ public interface BookingController {
         @ApiResponse(responseCode = "404", description = "Booking not found")
     })
     @DeleteMapping("/{id}")
-    ResponseEntity<Void> deleteBooking(@Parameter(description = "ID of the booking", required = true) @PathVariable Long id);
+    ResponseEntity<Void> deleteBooking(@Parameter(description = "ID of the booking", required = true) @PathVariable UUID id);
 }

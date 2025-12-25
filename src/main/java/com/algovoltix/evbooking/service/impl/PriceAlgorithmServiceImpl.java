@@ -12,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -28,19 +29,23 @@ public class PriceAlgorithmServiceImpl implements PriceAlgorithmService {
         log.info("Created PriceAlgorithm: {}", saved.getAlgorithmId());
         return PriceAlgorithmResponse.builder()
             .algorithmId(saved.getAlgorithmId())
-            .type(saved.getType())
+            .algorithmType(saved.getAlgorithmType())
             .config(saved.getConfig())
+            .createdAt(saved.getCreatedAt())
+            .updatedAt(saved.getUpdatedAt())
             .build();
     }
 
     @Override
-    public PriceAlgorithmResponse getPriceAlgorithmById(Long id) {
+    public PriceAlgorithmResponse getPriceAlgorithmById(UUID id) {
         PriceAlgorithm algorithm = priceAlgorithmRepository.findById(id)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "PriceAlgorithm not found"));
         return PriceAlgorithmResponse.builder()
             .algorithmId(algorithm.getAlgorithmId())
-            .type(algorithm.getType())
+            .algorithmType(algorithm.getAlgorithmType())
             .config(algorithm.getConfig())
+            .createdAt(algorithm.getCreatedAt())
+            .updatedAt(algorithm.getUpdatedAt())
             .build();
     }
 
@@ -49,14 +54,16 @@ public class PriceAlgorithmServiceImpl implements PriceAlgorithmService {
         return priceAlgorithmRepository.findAll().stream()
             .map(algorithm -> PriceAlgorithmResponse.builder()
                 .algorithmId(algorithm.getAlgorithmId())
-                .type(algorithm.getType())
+                .algorithmType(algorithm.getAlgorithmType())
                 .config(algorithm.getConfig())
+                .createdAt(algorithm.getCreatedAt())
+                .updatedAt(algorithm.getUpdatedAt())
                 .build())
             .collect(Collectors.toList());
     }
 
     @Override
-    public PriceAlgorithmResponse updatePriceAlgorithm(Long id, PriceAlgorithmRequest request) {
+    public PriceAlgorithmResponse updatePriceAlgorithm(UUID id, PriceAlgorithmRequest request) {
         PriceAlgorithm algorithm = priceAlgorithmRepository.findById(id)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "PriceAlgorithm not found"));
         algorithm.setType(request.getType());
@@ -65,13 +72,15 @@ public class PriceAlgorithmServiceImpl implements PriceAlgorithmService {
         log.info("Updated PriceAlgorithm: {}", saved.getAlgorithmId());
         return PriceAlgorithmResponse.builder()
             .algorithmId(saved.getAlgorithmId())
-            .type(saved.getType())
+            .algorithmType(saved.getAlgorithmType())
             .config(saved.getConfig())
+            .createdAt(saved.getCreatedAt())
+            .updatedAt(saved.getUpdatedAt())
             .build();
     }
 
     @Override
-    public void deletePriceAlgorithm(Long id) {
+    public void deletePriceAlgorithm(UUID id) {
         if (!priceAlgorithmRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "PriceAlgorithm not found");
         }
@@ -79,4 +88,3 @@ public class PriceAlgorithmServiceImpl implements PriceAlgorithmService {
         log.info("Deleted PriceAlgorithm: {}", id);
     }
 }
-

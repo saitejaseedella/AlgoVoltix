@@ -3,5 +3,7 @@ package com.algovoltix.evbooking.repository;
 import com.algovoltix.evbooking.entity.EVStation;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface EVStationRepository extends JpaRepository<EVStation, Long> {
+import java.util.UUID;
+
+public interface EVStationRepository extends JpaRepository<EVStation, UUID> {
 }

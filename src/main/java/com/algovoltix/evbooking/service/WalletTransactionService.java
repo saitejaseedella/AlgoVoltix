@@ -1,12 +1,14 @@
 package com.algovoltix.evbooking.service;
 
-import com.algovoltix.evbooking.entity.WalletTransaction;
+import com.algovoltix.evbooking.dto.request.WalletTransactionRequest;
+import com.algovoltix.evbooking.dto.response.WalletTransactionResponse;
 import java.util.List;
+import java.util.UUID;
 
 public interface WalletTransactionService {
-    WalletTransaction createWalletTransaction(WalletTransaction walletTransaction);
-    WalletTransaction getWalletTransactionById(Long id);
-    List<WalletTransaction> getAllWalletTransactions();
-    WalletTransaction updateWalletTransaction(Long id, WalletTransaction walletTransaction);
-    void deleteWalletTransaction(Long id);
+    WalletTransactionResponse createWalletTransaction(WalletTransactionRequest request);
+    WalletTransactionResponse getWalletTransactionById(UUID id);
+    List<WalletTransactionResponse> getAllWalletTransactions();
+    WalletTransactionResponse updateWalletTransaction(UUID id, WalletTransactionRequest request);
+    void deleteWalletTransaction(UUID id);
 }

@@ -5,14 +5,15 @@ import com.algovoltix.evbooking.dto.response.EVStationResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.UUID;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.Parameter;
 
 @Tag(name = "EV Station", description = "APIs for managing EV Stations")
+@RequestMapping("/api/evstations")
 public interface EVStationController {
     @Operation(summary = "Create EV Station", description = "Create a new EV charging station.")
     @ApiResponses({
@@ -28,7 +29,7 @@ public interface EVStationController {
         @ApiResponse(responseCode = "404", description = "EV Station not found")
     })
     @GetMapping("/{id}")
-    ResponseEntity<EVStationResponse> getEVStationById(@Parameter(description = "ID of the EV Station", required = true) @PathVariable Long id);
+    ResponseEntity<EVStationResponse> getEVStationById(@Parameter(description = "ID of the EV Station", required = true) @PathVariable UUID id);
 
     @Operation(summary = "Get All EV Stations", description = "Retrieve all EV charging stations.")
     @ApiResponses({
@@ -43,7 +44,7 @@ public interface EVStationController {
         @ApiResponse(responseCode = "404", description = "EV Station not found")
     })
     @PutMapping("/{id}")
-    ResponseEntity<EVStationResponse> updateEVStation(@Parameter(description = "ID of the EV Station", required = true) @PathVariable Long id, @RequestBody EVStationRequest request);
+    ResponseEntity<EVStationResponse> updateEVStation(@Parameter(description = "ID of the EV Station", required = true) @PathVariable UUID id, @RequestBody EVStationRequest request);
 
     @Operation(summary = "Delete EV Station", description = "Delete an EV charging station by its ID.")
     @ApiResponses({
@@ -51,5 +52,5 @@ public interface EVStationController {
         @ApiResponse(responseCode = "404", description = "EV Station not found")
     })
     @DeleteMapping("/{id}")
-    ResponseEntity<Void> deleteEVStation(@Parameter(description = "ID of the EV Station", required = true) @PathVariable Long id);
+    ResponseEntity<Void> deleteEVStation(@Parameter(description = "ID of the EV Station", required = true) @PathVariable UUID id);
 }

@@ -14,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -38,7 +39,7 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public WalletResponse getWalletById(Long id) {
+    public WalletResponse getWalletById(UUID id) {
         Wallet wallet = walletRepository.findById(id)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Wallet not found"));
         return WalletResponse.builder()
@@ -58,7 +59,7 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public WalletResponse updateWallet(Long id, WalletRequest request) {
+    public WalletResponse updateWallet(UUID id, WalletRequest request) {
         Wallet wallet = walletRepository.findById(id)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Wallet not found"));
         if (request.getBalance() != null) wallet.setBalance(request.getBalance());
@@ -71,7 +72,7 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public void deleteWallet(Long id) {
+    public void deleteWallet(UUID id) {
         if (!walletRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Wallet not found");
         }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class SlotsServiceImpl implements SlotsService {
@@ -21,7 +22,7 @@ public class SlotsServiceImpl implements SlotsService {
   }
 
   @Override
-  public Slots getSlotById(Long id) {
+  public Slots getSlotById(UUID id) {
     return null;
   }
 
@@ -31,12 +32,12 @@ public class SlotsServiceImpl implements SlotsService {
   }
 
   @Override
-  public Slots updateSlot(Long id, Slots slot) {
+  public Slots updateSlot(UUID id, Slots slot) {
     return null;
   }
 
   @Override
-  public void deleteSlot(Long id) {
+  public void deleteSlot(UUID id) {
 
   }
 }

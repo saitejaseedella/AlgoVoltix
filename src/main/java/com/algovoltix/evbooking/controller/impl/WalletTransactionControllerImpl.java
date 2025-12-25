@@ -1,43 +1,43 @@
 package com.algovoltix.evbooking.controller.impl;
 
 import com.algovoltix.evbooking.controller.WalletTransactionController;
-import com.algovoltix.evbooking.entity.WalletTransaction;
+import com.algovoltix.evbooking.dto.request.WalletTransactionRequest;
+import com.algovoltix.evbooking.dto.response.WalletTransactionResponse;
 import com.algovoltix.evbooking.service.WalletTransactionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/wallet-transactions")
+@RequiredArgsConstructor
 public class WalletTransactionControllerImpl implements WalletTransactionController {
+    private final WalletTransactionService walletTransactionService;
 
-    @Autowired
-    private WalletTransactionService walletTransactionService;
-
-    @PostMapping
-    public ResponseEntity<WalletTransaction> createWalletTransaction(@RequestBody WalletTransaction walletTransaction) {
-        return ResponseEntity.ok(walletTransactionService.createWalletTransaction(walletTransaction));
+    @Override
+    public ResponseEntity<WalletTransactionResponse> createWalletTransaction(@RequestBody WalletTransactionRequest request) {
+        return ResponseEntity.ok(walletTransactionService.createWalletTransaction(request));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<WalletTransaction> getWalletTransactionById(@PathVariable Long id) {
+    @Override
+    public ResponseEntity<WalletTransactionResponse> getWalletTransactionById(@PathVariable UUID id) {
         return ResponseEntity.ok(walletTransactionService.getWalletTransactionById(id));
     }
 
-    @GetMapping
-    public ResponseEntity<List<WalletTransaction>> getAllWalletTransactions() {
+    @Override
+    public ResponseEntity<List<WalletTransactionResponse>> getAllWalletTransactions() {
         return ResponseEntity.ok(walletTransactionService.getAllWalletTransactions());
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<WalletTransaction> updateWalletTransaction(@PathVariable Long id, @RequestBody WalletTransaction walletTransaction) {
-        return ResponseEntity.ok(walletTransactionService.updateWalletTransaction(id, walletTransaction));
+    @Override
+    public ResponseEntity<WalletTransactionResponse> updateWalletTransaction(@PathVariable UUID id, @RequestBody WalletTransactionRequest request) {
+        return ResponseEntity.ok(walletTransactionService.updateWalletTransaction(id, request));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteWalletTransaction(@PathVariable Long id) {
+    @Override
+    public ResponseEntity<Void> deleteWalletTransaction(@PathVariable UUID id) {
         walletTransactionService.deleteWalletTransaction(id);
         return ResponseEntity.noContent().build();
     }

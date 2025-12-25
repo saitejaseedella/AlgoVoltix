@@ -38,7 +38,6 @@ public class JwtServiceImpl implements JwtService {
 
   public String generateToken(UserDetails userDetails) {
     Map<String, Object> claims = new HashMap<>();
-    // Only add the single role claim, matching the User entity's role
     claims.put("role", userDetails.getAuthorities().stream().findFirst().map(Object::toString).orElse("USER"));
     return generateToken(claims, userDetails);
   }
@@ -49,9 +48,8 @@ public class JwtServiceImpl implements JwtService {
     return Jwts.builder()
         .setSubject(userDetails.getUsername())
         .addClaims(extraClaims)
-        // Remove .claim("roles", ...) to avoid confusion
         .setIssuedAt(new Date(System.currentTimeMillis()))
-        .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24)) // 1 day
+        .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
         .signWith(getSignInKey(), SignatureAlgorithm.HS256)
         .compact();
   }

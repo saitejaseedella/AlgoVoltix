@@ -6,11 +6,13 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @Builder
 public class RateCardRequest {
-    private Long slotId;
+    private UUID slotId;
     private Double price;
+    private UUID algorithmId;
 }
-

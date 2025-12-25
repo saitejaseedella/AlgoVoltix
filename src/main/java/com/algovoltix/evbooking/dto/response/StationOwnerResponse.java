@@ -1,5 +1,6 @@
 package com.algovoltix.evbooking.dto.response;
 
+import java.util.UUID;
 import lombok.Builder;
 import lombok.Data;
 
@@ -10,7 +11,8 @@ import lombok.Setter;
 @Setter
 @Builder
 public class StationOwnerResponse {
-    private Long userId;
+    private UUID userId;
     private String gstNumber;
+    private java.util.Date createdAt;
+    private java.util.Date updatedAt;
 }
-

@@ -1,5 +1,7 @@
 package com.algovoltix.evbooking.dto.request;
 
+import java.util.UUID;
+
 import lombok.Builder;
 import lombok.Data;
 
@@ -10,6 +12,6 @@ import lombok.Setter;
 @Setter
 @Builder
 public class WalletRequest {
-    private Long userId;
+    private UUID userId;
     private Double balance;
 }

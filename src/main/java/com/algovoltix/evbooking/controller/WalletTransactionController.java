@@ -1,5 +1,7 @@
 package com.algovoltix.evbooking.controller;
 
+import com.algovoltix.evbooking.dto.request.WalletTransactionRequest;
+import com.algovoltix.evbooking.dto.response.WalletTransactionResponse;
 import com.algovoltix.evbooking.entity.WalletTransaction;
 import com.algovoltix.evbooking.service.WalletTransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,23 +9,24 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/wallet-transactions")
 public interface WalletTransactionController {
 
     @PostMapping
-    ResponseEntity<WalletTransaction> createWalletTransaction(@RequestBody WalletTransaction walletTransaction);
+    ResponseEntity<WalletTransactionResponse> createWalletTransaction(@RequestBody WalletTransactionRequest request);
 
     @GetMapping("/{id}")
-    ResponseEntity<WalletTransaction> getWalletTransactionById(@PathVariable Long id);
+    ResponseEntity<WalletTransactionResponse> getWalletTransactionById(@PathVariable UUID id);
 
     @GetMapping
-    ResponseEntity<List<WalletTransaction>> getAllWalletTransactions();
+    ResponseEntity<List<WalletTransactionResponse>> getAllWalletTransactions();
 
     @PutMapping("/{id}")
-    ResponseEntity<WalletTransaction> updateWalletTransaction(@PathVariable Long id, @RequestBody WalletTransaction walletTransaction);
+    ResponseEntity<WalletTransactionResponse> updateWalletTransaction(@PathVariable UUID id, @RequestBody WalletTransactionRequest request);
 
     @DeleteMapping("/{id}")
-    ResponseEntity<Void> deleteWalletTransaction(@PathVariable Long id);
+    ResponseEntity<Void> deleteWalletTransaction(@PathVariable UUID id);
 }

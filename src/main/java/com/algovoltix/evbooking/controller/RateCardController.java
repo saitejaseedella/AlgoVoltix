@@ -5,14 +5,15 @@ import com.algovoltix.evbooking.dto.response.RateCardResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.UUID;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.Parameter;
 
 @Tag(name = "Rate Card", description = "APIs for managing rate cards")
+@RequestMapping("/api/rate-cards")
 public interface RateCardController {
     @Operation(summary = "Create Rate Card", description = "Create a new rate card.")
     @ApiResponses({
@@ -20,7 +21,7 @@ public interface RateCardController {
         @ApiResponse(responseCode = "400", description = "Invalid input")
     })
     @PostMapping
-    ResponseEntity<RateCardResponse> createRateCard(@RequestBody(description = "Rate card create request", required = true) RateCardRequest request);
+    ResponseEntity<RateCardResponse> createRateCard(@RequestBody RateCardRequest request);
 
     @Operation(summary = "Get Rate Card by ID", description = "Retrieve a rate card by its ID.")
     @ApiResponses({
@@ -28,7 +29,7 @@ public interface RateCardController {
         @ApiResponse(responseCode = "404", description = "Rate card not found")
     })
     @GetMapping("/{id}")
-    ResponseEntity<RateCardResponse> getRateCardById(@Parameter(description = "ID of the rate card", required = true) @PathVariable Long id);
+    ResponseEntity<RateCardResponse> getRateCardById(@Parameter(description = "ID of the rate card", required = true) @PathVariable UUID id);
 
     @Operation(summary = "Get All Rate Cards", description = "Retrieve all rate cards.")
     @ApiResponses({
@@ -43,7 +44,7 @@ public interface RateCardController {
         @ApiResponse(responseCode = "404", description = "Rate card not found")
     })
     @PutMapping("/{id}")
-    ResponseEntity<RateCardResponse> updateRateCard(@Parameter(description = "ID of the rate card", required = true) @PathVariable Long id, @RequestBody(description = "Rate card update request", required = true) RateCardRequest request);
+    ResponseEntity<RateCardResponse> updateRateCard(@Parameter(description = "ID of the rate card", required = true) @PathVariable UUID id, @RequestBody RateCardRequest request);
 
     @Operation(summary = "Delete Rate Card", description = "Delete a rate card by its ID.")
     @ApiResponses({
@@ -51,5 +52,5 @@ public interface RateCardController {
         @ApiResponse(responseCode = "404", description = "Rate card not found")
     })
     @DeleteMapping("/{id}")
-    ResponseEntity<Void> deleteRateCard(@Parameter(description = "ID of the rate card", required = true) @PathVariable Long id);
+    ResponseEntity<Void> deleteRateCard(@Parameter(description = "ID of the rate card", required = true) @PathVariable UUID id);
 }

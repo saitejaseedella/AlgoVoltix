@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -29,69 +30,116 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingResponse createBooking(BookingRequest bookingRequest) {
+        log.info("Attempting to create booking for userId={} and slotId={}", bookingRequest.getUserId(), bookingRequest.getSlotId());
         Customer customer = customerRepository.findById(bookingRequest.getUserId())
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found"));
+            .orElseThrow(() -> {
+                log.error("User not found for booking: userId={}", bookingRequest.getUserId());
+                return CommonExceptions.USER_NOT_FOUND;
+            });
         StationSlot slot = stationSlotRepository.findById(bookingRequest.getSlotId())
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Slot not found"));
+            .orElseThrow(() -> {
+                log.error("Slot not found or already booked: slotId={}", bookingRequest.getSlotId());
+                return CommonExceptions.SLOT_ALREADY_BOOKED;
+            });
         Booking booking = new Booking();
         booking.setCustomer(customer);
         booking.setStationSlot(slot);
         booking.setStartTime(LocalDateTime.parse(bookingRequest.getStartTime()));
         booking.setEndTime(LocalDateTime.parse(bookingRequest.getEndTime()));
         booking.setBookingStatus("PENDING");
-        booking.setTotalPrice(0.0); // Pricing logic can be added
+        booking.setTotalPrice(0.0);
         bookingRepository.save(booking);
-        log.info("Booking created: {}", booking.getBookingId());
+        log.info("Booking created successfully: bookingId={}", booking.getBookingId());
         return BookingResponse.builder()
             .bookingId(booking.getBookingId())
-            .status(booking.getBookingStatus())
-            .message("Booking created successfully")
+            .userId(booking.getCustomer() != null ? booking.getCustomer().getBaseUser().getUserId() : null)
+            .slotId(booking.getStationSlot() != null ? booking.getStationSlot().getSlotId() : null)
+            .startTime(booking.getStartTime() != null ? booking.getStartTime().toString() : null)
+            .endTime(booking.getEndTime() != null ? booking.getEndTime().toString() : null)
+            .bookingStatus(booking.getBookingStatus())
+            .totalPrice(booking.getTotalPrice())
+            .duration(booking.getDuration())
+            .createdAt(booking.getCreatedAt())
+            .updatedAt(booking.getUpdatedAt())
             .build();
     }
 
     @Override
-    public BookingResponse getBookingById(Long id) {
+    public BookingResponse getBookingById(UUID id) {
+        log.info("Fetching booking by id={}", id);
         Booking booking = bookingRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, CommonExceptions.RESOURCE_NOT_FOUND.getMessage()));
+            .orElseThrow(() -> {
+                log.error("Booking not found: id={}", id);
+                return CommonExceptions.RESOURCE_NOT_FOUND;
+            });
         return BookingResponse.builder()
             .bookingId(booking.getBookingId())
-            .status(booking.getBookingStatus())
-            .message("Booking fetched successfully")
+            .userId(booking.getCustomer() != null ? booking.getCustomer().getBaseUser().getUserId() : null)
+            .slotId(booking.getStationSlot() != null ? booking.getStationSlot().getSlotId() : null)
+            .startTime(booking.getStartTime() != null ? booking.getStartTime().toString() : null)
+            .endTime(booking.getEndTime() != null ? booking.getEndTime().toString() : null)
+            .bookingStatus(booking.getBookingStatus())
+            .totalPrice(booking.getTotalPrice())
+            .duration(booking.getDuration())
+            .createdAt(booking.getCreatedAt())
+            .updatedAt(booking.getUpdatedAt())
             .build();
     }
 
     @Override
     public List<BookingResponse> getAllBookings() {
+        log.info("Fetching all bookings");
         return bookingRepository.findAll().stream()
                 .map(booking -> BookingResponse.builder()
                     .bookingId(booking.getBookingId())
-                    .status(booking.getBookingStatus())
-                    .message("Booking fetched successfully")
+                    .userId(booking.getCustomer() != null ? booking.getCustomer().getBaseUser().getUserId() : null)
+                    .slotId(booking.getStationSlot() != null ? booking.getStationSlot().getSlotId() : null)
+                    .startTime(booking.getStartTime() != null ? booking.getStartTime().toString() : null)
+                    .endTime(booking.getEndTime() != null ? booking.getEndTime().toString() : null)
+                    .bookingStatus(booking.getBookingStatus())
+                    .totalPrice(booking.getTotalPrice())
+                    .duration(booking.getDuration())
+                    .createdAt(booking.getCreatedAt())
+                    .updatedAt(booking.getUpdatedAt())
                     .build())
                 .collect(Collectors.toList());
     }
 
     @Override
-    public BookingResponse updateBooking(Long id, BookingRequest bookingRequest) {
+    public BookingResponse updateBooking(UUID id, BookingRequest bookingRequest) {
+        log.info("Attempting to update booking: id={}", id);
+        if (!bookingRepository.existsById(id)) {
+            log.error("Booking not found for update: id={}", id);
+            throw CommonExceptions.RESOURCE_NOT_FOUND;
+        }
         Booking booking = bookingRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, CommonExceptions.RESOURCE_NOT_FOUND.getMessage()));
+                .orElseThrow(() -> CommonExceptions.RESOURCE_NOT_FOUND);
         if (bookingRequest.getStartTime() != null) booking.setStartTime(LocalDateTime.parse(bookingRequest.getStartTime()));
         if (bookingRequest.getEndTime() != null) booking.setEndTime(LocalDateTime.parse(bookingRequest.getEndTime()));
         bookingRepository.save(booking);
-        log.info("Booking updated: {}", booking.getBookingId());
+        log.info("Booking updated successfully: id={}", id);
         return BookingResponse.builder()
             .bookingId(booking.getBookingId())
-            .status(booking.getBookingStatus())
-            .message("Booking updated successfully")
+            .userId(booking.getCustomer() != null ? booking.getCustomer().getBaseUser().getUserId() : null)
+            .slotId(booking.getStationSlot() != null ? booking.getStationSlot().getSlotId() : null)
+            .startTime(booking.getStartTime() != null ? booking.getStartTime().toString() : null)
+            .endTime(booking.getEndTime() != null ? booking.getEndTime().toString() : null)
+            .bookingStatus(booking.getBookingStatus())
+            .totalPrice(booking.getTotalPrice())
+            .duration(booking.getDuration())
+            .createdAt(booking.getCreatedAt())
+            .updatedAt(booking.getUpdatedAt())
             .build();
     }
 
     @Override
-    public void deleteBooking(Long id) {
+    public void deleteBooking(UUID id) {
+        log.info("Attempting to delete booking: id={}", id);
         if (!bookingRepository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, CommonExceptions.RESOURCE_NOT_FOUND.getMessage());
+            log.error("Booking not found for delete: id={}", id);
+            throw CommonExceptions.RESOURCE_NOT_FOUND;
         }
         bookingRepository.deleteById(id);
-        log.info("Booking deleted: {}", id);
+        log.info("Booking deleted successfully: id={}", id);
     }
 }

@@ -8,9 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class BaseUserControllerImpl implements BaseUserController {
     private final BaseUserService baseUserService;
@@ -21,7 +21,7 @@ public class BaseUserControllerImpl implements BaseUserController {
     }
 
     @Override
-    public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
+    public ResponseEntity<UserResponse> getUserById(@PathVariable UUID id) {
         return ResponseEntity.ok(baseUserService.getUserById(id));
     }
 
@@ -31,14 +31,13 @@ public class BaseUserControllerImpl implements BaseUserController {
     }
 
     @Override
-    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @RequestBody UserRequest userRequest) {
+    public ResponseEntity<UserResponse> updateUser(@PathVariable UUID id, @RequestBody UserRequest userRequest) {
         return ResponseEntity.ok(baseUserService.updateUser(id, userRequest));
     }
 
     @Override
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
         baseUserService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
 }
-

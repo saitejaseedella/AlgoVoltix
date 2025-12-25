@@ -1,13 +1,18 @@
 package com.algovoltix.evbooking.service.impl;
 
+import com.algovoltix.evbooking.dto.request.WalletTransactionRequest;
+import com.algovoltix.evbooking.dto.response.WalletTransactionResponse;
 import com.algovoltix.evbooking.entity.WalletTransaction;
 import com.algovoltix.evbooking.repository.WalletTransactionRepository;
 import com.algovoltix.evbooking.service.WalletTransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class WalletTransactionServiceImpl implements WalletTransactionService {
@@ -16,32 +21,90 @@ public class WalletTransactionServiceImpl implements WalletTransactionService {
     private WalletTransactionRepository walletTransactionRepository;
 
     @Override
-    public WalletTransaction createWalletTransaction(WalletTransaction walletTransaction) {
-        return walletTransactionRepository.save(walletTransaction);
+    public WalletTransactionResponse createWalletTransaction(WalletTransactionRequest request) {
+        WalletTransaction entity = new WalletTransaction();
+        entity.setWallet(null); // Set wallet if needed
+        entity.setBooking(null); // Set booking if needed
+        entity.setPayment(null); // Set payment if needed
+        entity.setUserId(request.getWalletId()); // or set userId if needed
+        entity.setWalletTransactionType(null); // Set if needed
+        entity.setAmount(BigDecimal.valueOf(request.getAmount()));
+        entity.setCreatedAt(Instant.now());
+        entity.setReference(null); // Set if needed
+        entity.setTransactionBy(request.getTransactionBy());
+        entity.setType(request.getType());
+        entity.setSource(request.getSource());
+        WalletTransaction saved = walletTransactionRepository.save(entity);
+        return WalletTransactionResponse.builder()
+            .transactionId(saved.getId())
+            .walletId(saved.getUserId())
+            .amount(saved.getAmount().doubleValue())
+            .type(saved.getType())
+            .source(saved.getSource())
+            .bookingId(saved.getBooking() != null ? saved.getBooking().getBookingId() : null)
+            .paymentId(saved.getPayment() != null ? saved.getPayment().getPaymentId() : null)
+            .transactionBy(saved.getTransactionBy())
+            .build();
     }
 
     @Override
-    public WalletTransaction getWalletTransactionById(Long id) {
+    public WalletTransactionResponse getWalletTransactionById(UUID id) {
         Optional<WalletTransaction> walletTransaction = walletTransactionRepository.findById(id);
-        return walletTransaction.orElse(null);
+        if (walletTransaction.isEmpty()) return null;
+        WalletTransaction saved = walletTransaction.get();
+        return WalletTransactionResponse.builder()
+            .transactionId(saved.getId())
+            .walletId(saved.getUserId())
+            .amount(saved.getAmount().doubleValue())
+            .type(saved.getType())
+            .source(saved.getSource())
+            .bookingId(saved.getBooking() != null ? saved.getBooking().getBookingId() : null)
+            .paymentId(saved.getPayment() != null ? saved.getPayment().getPaymentId() : null)
+            .transactionBy(saved.getTransactionBy())
+            .build();
     }
 
     @Override
-    public List<WalletTransaction> getAllWalletTransactions() {
-        return walletTransactionRepository.findAll();
+    public List<WalletTransactionResponse> getAllWalletTransactions() {
+        return walletTransactionRepository.findAll().stream().map(saved ->
+            WalletTransactionResponse.builder()
+                .transactionId(saved.getId())
+                .walletId(saved.getUserId())
+                .amount(saved.getAmount().doubleValue())
+                .type(saved.getType())
+                .source(saved.getSource())
+                .bookingId(saved.getBooking() != null ? saved.getBooking().getBookingId() : null)
+                .paymentId(saved.getPayment() != null ? saved.getPayment().getPaymentId() : null)
+                .transactionBy(saved.getTransactionBy())
+                .build()
+        ).toList();
     }
 
     @Override
-    public WalletTransaction updateWalletTransaction(Long id, WalletTransaction walletTransaction) {
-        if (walletTransactionRepository.existsById(id)) {
-            walletTransaction.setId(id);
-            return walletTransactionRepository.save(walletTransaction);
-        }
-        return null;
+    public WalletTransactionResponse updateWalletTransaction(UUID id, WalletTransactionRequest request) {
+        Optional<WalletTransaction> opt = walletTransactionRepository.findById(id);
+        if (opt.isEmpty()) return null;
+        WalletTransaction entity = opt.get();
+        entity.setUserId(request.getWalletId());
+        entity.setAmount(BigDecimal.valueOf(request.getAmount()));
+        entity.setType(request.getType());
+        entity.setSource(request.getSource());
+        entity.setTransactionBy(request.getTransactionBy());
+        WalletTransaction saved = walletTransactionRepository.save(entity);
+        return WalletTransactionResponse.builder()
+            .transactionId(saved.getId())
+            .walletId(saved.getUserId())
+            .amount(saved.getAmount().doubleValue())
+            .type(saved.getType())
+            .source(saved.getSource())
+            .bookingId(saved.getBooking() != null ? saved.getBooking().getBookingId() : null)
+            .paymentId(saved.getPayment() != null ? saved.getPayment().getPaymentId() : null)
+            .transactionBy(saved.getTransactionBy())
+            .build();
     }
 
     @Override
-    public void deleteWalletTransaction(Long id) {
+    public void deleteWalletTransaction(UUID id) {
         walletTransactionRepository.deleteById(id);
     }
 }

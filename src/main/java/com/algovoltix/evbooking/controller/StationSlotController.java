@@ -11,8 +11,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @Tag(name = "Station Slot", description = "APIs for managing station slots")
+@RequestMapping("/api/stationslots")
 public interface StationSlotController {
     @Operation(summary = "Create Station Slot", description = "Create a new station slot.")
     @ApiResponses({
@@ -28,7 +30,7 @@ public interface StationSlotController {
         @ApiResponse(responseCode = "404", description = "Station slot not found")
     })
     @GetMapping("/{id}")
-    ResponseEntity<StationSlotResponse> getStationSlotById(@Parameter(description = "ID of the station slot", required = true) @PathVariable Long id);
+    ResponseEntity<StationSlotResponse> getStationSlotById(@Parameter(description = "ID of the station slot", required = true) @PathVariable UUID id);
 
     @Operation(summary = "Get All Station Slots", description = "Retrieve all station slots.")
     @ApiResponses({
@@ -43,7 +45,7 @@ public interface StationSlotController {
         @ApiResponse(responseCode = "404", description = "Station slot not found")
     })
     @PutMapping("/{id}")
-    ResponseEntity<StationSlotResponse> updateStationSlot(@Parameter(description = "ID of the station slot", required = true) @PathVariable Long id, @RequestBody StationSlotRequest request);
+    ResponseEntity<StationSlotResponse> updateStationSlot(@Parameter(description = "ID of the station slot", required = true) @PathVariable UUID id, @RequestBody StationSlotRequest request);
 
     @Operation(summary = "Delete Station Slot", description = "Delete a station slot by its ID.")
     @ApiResponses({
@@ -51,5 +53,5 @@ public interface StationSlotController {
         @ApiResponse(responseCode = "404", description = "Station slot not found")
     })
     @DeleteMapping("/{id}")
-    ResponseEntity<Void> deleteStationSlot(@Parameter(description = "ID of the station slot", required = true) @PathVariable Long id);
+    ResponseEntity<Void> deleteStationSlot(@Parameter(description = "ID of the station slot", required = true) @PathVariable UUID id);
 }

@@ -6,14 +6,16 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @Entity
 public class StationSlot {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long slotId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID slotId;
 
     @ManyToOne
     @JoinColumn(name = "station_id")

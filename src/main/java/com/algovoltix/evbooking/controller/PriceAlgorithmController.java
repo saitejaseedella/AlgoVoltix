@@ -5,14 +5,15 @@ import com.algovoltix.evbooking.dto.response.PriceAlgorithmResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.UUID;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.Parameter;
 
 @Tag(name = "Price Algorithm", description = "APIs for managing price algorithms")
+@RequestMapping("/api/price-algorithms")
 public interface PriceAlgorithmController {
     @Operation(summary = "Create Price Algorithm", description = "Create a new price algorithm.")
     @ApiResponses({
@@ -28,7 +29,7 @@ public interface PriceAlgorithmController {
         @ApiResponse(responseCode = "404", description = "Price algorithm not found")
     })
     @GetMapping("/{id}")
-    ResponseEntity<PriceAlgorithmResponse> getPriceAlgorithmById(@Parameter(description = "ID of the price algorithm", required = true) @PathVariable Long id);
+    ResponseEntity<PriceAlgorithmResponse> getPriceAlgorithmById(@Parameter(description = "ID of the price algorithm", required = true) @PathVariable UUID id);
 
     @Operation(summary = "Get All Price Algorithms", description = "Retrieve all price algorithms.")
     @ApiResponses({
@@ -43,7 +44,7 @@ public interface PriceAlgorithmController {
         @ApiResponse(responseCode = "404", description = "Price algorithm not found")
     })
     @PutMapping("/{id}")
-    ResponseEntity<PriceAlgorithmResponse> updatePriceAlgorithm(@Parameter(description = "ID of the price algorithm", required = true) @PathVariable Long id, @RequestBody PriceAlgorithmRequest request);
+    ResponseEntity<PriceAlgorithmResponse> updatePriceAlgorithm(@Parameter(description = "ID of the price algorithm", required = true) @PathVariable UUID id, @RequestBody PriceAlgorithmRequest request);
 
     @Operation(summary = "Delete Price Algorithm", description = "Delete a price algorithm by its ID.")
     @ApiResponses({
@@ -51,5 +52,5 @@ public interface PriceAlgorithmController {
         @ApiResponse(responseCode = "404", description = "Price algorithm not found")
     })
     @DeleteMapping("/{id}")
-    ResponseEntity<Void> deletePriceAlgorithm(@Parameter(description = "ID of the price algorithm", required = true) @PathVariable Long id);
+    ResponseEntity<Void> deletePriceAlgorithm(@Parameter(description = "ID of the price algorithm", required = true) @PathVariable UUID id);
 }
