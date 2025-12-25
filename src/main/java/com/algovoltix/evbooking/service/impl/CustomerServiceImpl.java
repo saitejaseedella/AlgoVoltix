@@ -37,7 +37,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     Customer customer = new Customer();
-    customer.setBaseUser(user); // managed inside tx
+    customer.setBaseUser(user);
     customer.setCarType(request.getCarType());
     customer.setCarNumber(request.getCarNumber());
 
