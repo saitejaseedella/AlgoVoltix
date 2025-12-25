@@ -23,7 +23,7 @@ public class SlotsServiceImpl implements SlotsService {
 
   @Override
   public Slots getSlotById(UUID id) {
-    return null;
+    return seatRepository.findById(id).orElse(null);
   }
 
   @Override
